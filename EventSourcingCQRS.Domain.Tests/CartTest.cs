@@ -50,7 +50,10 @@ namespace EventSourcingCQRS.Domain.Tests
             cart.AddProduct(new CartItem(DefaultProductId, 2));
             ClearUncommittedEvents(cart);
 
-            Assert.Throws<CartException>(() => { cart.AddProduct(new CartItem(DefaultProductId, 1)); });
+            Assert.Throws<CartException>(() =>
+            {
+                cart.AddProduct(new CartItem(DefaultProductId, 1));
+            });
             Assert.Empty(GetUncommittedEventsOf(cart));
         }
 
