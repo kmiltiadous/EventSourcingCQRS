@@ -1,12 +1,11 @@
 ﻿using EventSourcingCQRS.Domain.CartModule;
-using EventSourcingCQRS.ReadModel.Customer;
 using EventSourcingCQRS.ReadModel.Persistence;
-using EventSourcingCQRS.ReadModel.Product;
-using CartReadModel = EventSourcingCQRS.ReadModel.Cart.Cart;
-using CartItemReadModel = EventSourcingCQRS.ReadModel.Cart.CartItem;
+using CartReadModel = EventSourcingCQRS.ReadModel.Models.Cart;
+using CartItemReadModel = EventSourcingCQRS.ReadModel.Models.CartItem;
 using System.Linq;
 using System.Threading.Tasks;
 using EventSourcingCQRS.Application.Services;
+using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.Application.Handlers
 {

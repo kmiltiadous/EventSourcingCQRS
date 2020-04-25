@@ -1,6 +1,4 @@
-﻿using EventSourcingCQRS.ReadModel.Common;
-
-namespace EventSourcingCQRS.ReadModel.Cart
+﻿namespace EventSourcingCQRS.ReadModel.Models
 {
     public class CartItem : IReadEntity
     {

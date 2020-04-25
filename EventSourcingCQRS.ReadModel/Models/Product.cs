@@ -1,6 +1,4 @@
-﻿using EventSourcingCQRS.ReadModel.Common;
-
-namespace EventSourcingCQRS.ReadModel.Product
+﻿namespace EventSourcingCQRS.ReadModel.Models
 {
     public class Product : IReadEntity
     {

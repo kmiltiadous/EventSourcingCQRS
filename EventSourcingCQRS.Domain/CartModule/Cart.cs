@@ -4,6 +4,7 @@ using EventSourcingCQRS.Domain.CustomerModule;
 using EventSourcingCQRS.Domain.ProductModule;
 using System.Collections.Generic;
 using System.Linq;
+using EventSourcingCQRS.Domain.Validation;
 
 namespace EventSourcingCQRS.Domain.CartModule
 {
@@ -34,27 +35,29 @@ namespace EventSourcingCQRS.Domain.CartModule
             RaiseEvent(new CartCreatedEvent(cartId, customerId));
         }
 
-        public void AddProduct(ProductId productId, int quantity)
+        public void AddProduct(CartItem cartItem)
         {
-            if (productId == null)
+            var validator = new ProductInInventoryValidator().And(new CartItemNotInCartValidator(Items));
+
+            var result = validator.Validate(cartItem);
+            if (!result.IsValid)
             {
-                throw new ArgumentNullException(nameof(productId));
+                throw new CartException( result.Errors.First().ErrorMessage);
             }
-            if (ContainsProduct(productId))
-            {
-                throw new CartException($"Product {productId} already added");
-            }
-            CheckQuantity(productId, quantity);
-            RaiseEvent(new ProductAddedEvent(productId, quantity));
+
+            RaiseEvent(new ProductAddedEvent(cartItem.ProductId, cartItem.Quantity));
         }
 
         public void ChangeProductQuantity(ProductId productId, int quantity)
         {
-            if (!ContainsProduct(productId))
+            var validator = new ProductInInventoryValidator().And(new CartItemInCartValidator(Items));
+
+            var result = validator.Validate(new CartItem(productId, quantity));
+            if (!result.IsValid)
             {
-                throw new CartException($"Product {productId} not found");
+                throw new CartException(result.Errors.First().ErrorMessage);
             }
-            CheckQuantity(productId, quantity);
+
             RaiseEvent(new ProductQuantityChangedEvent(productId, GetCartItemByProduct(productId).Quantity, quantity));
         }
 
@@ -82,26 +85,9 @@ namespace EventSourcingCQRS.Domain.CartModule
             Items.Add(existingItem.WithQuantity(ev.NewQuantity));
         }
 
-        private bool ContainsProduct(ProductId productId)
-        {
-            return Items.Any(x => x.ProductId == productId);
-        }
-
         private CartItem GetCartItemByProduct(ProductId productId)
         {
             return Items.Single(x => x.ProductId == productId);
-        }
-
-        private static void CheckQuantity(ProductId productId, int quantity)
-        {
-            if (quantity <= 0)
-            {
-                throw new ArgumentException("Quantity must be greater than zero", nameof(quantity));
-            }
-            if (quantity > ProductQuantityThreshold)
-            {
-                throw new CartException($"Quantity for product {productId} must be less than or equal to {ProductQuantityThreshold}");
-            }
         }
     }
 }

@@ -10,17 +10,20 @@ using EventSourcingCQRS.Domain.PubSub;
 using EventSourcingCQRS.Domain.EventStore;
 using EventSourcingCQRS.Domain.Persistence.EventStore;
 using MongoDB.Driver;
-using EventSourcingCQRS.Domain.Core;
 using EventSourcingCQRS.ReadModel.Persistence;
-using ReadCart = EventSourcingCQRS.ReadModel.Cart.Cart;
-using ReadCartItem = EventSourcingCQRS.ReadModel.Cart.CartItem;
+using ReadCart = EventSourcingCQRS.ReadModel.Models.Cart;
+using ReadCartItem = EventSourcingCQRS.ReadModel.Models.CartItem;
 using System.Linq;
-using EventSourcingCQRS.ReadModel.Product;
 using System.Threading.Tasks;
-using EventSourcingCQRS.ReadModel.Customer;
+using AutoMapper;
 using EventSourcingCQRS.Application.Services;
 using EventSourcingCQRS.Application.PubSub;
 using EventSourcingCQRS.Application.Handlers;
+using MediatR;
+using EventSourcingCQRS.Application.Commands;
+using EventSourcingCQRS.ReadModel.Models;
+using Microsoft.AspNetCore.Mvc;
+using Cart = EventSourcingCQRS.Domain.CartModule.Cart;
 
 namespace EventSourcingCQRS
 {
@@ -39,12 +42,14 @@ namespace EventSourcingCQRS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSingleton(x => EventStoreConnection.Create(new Uri("tcp://eventstore:1113")));
-            services.AddTransient<ITransientDomainEventPublisher, TransientDomainEventPubSub>();
+            services.AddMediatR(typeof(GetCartDetailsCommand));
+            services.AddAutoMapper(typeof(Startup));
+            services.AddSingleton(x => EventStoreConnection.Create(new Uri("tcp://127.0.0.1:1113")));
+            services.AddTransient<ITransientDomainEventPublisher>(s => TransientDomainEventPubSubFactory.CreateInstance(s));
             services.AddTransient<ITransientDomainEventSubscriber, TransientDomainEventPubSub>();
             services.AddTransient<IRepository<Cart, CartId>, EventSourcingRepository<Cart, CartId>>();
             services.AddSingleton<IEventStore, EventStoreEventStore>();
-            services.AddSingleton(x => new MongoClient("mongodb://mongo:27017"));
+            services.AddSingleton(x => new MongoClient("mongodb://localhost:27017"));
             services.AddSingleton(x => x.GetService<MongoClient>().GetDatabase(ReadModelDBName));
             services.AddTransient<IReadOnlyRepository<ReadCart>, MongoDBRepository<ReadCart>>();
             services.AddTransient<IRepository<ReadCart>, MongoDBRepository<ReadCart>>();
@@ -59,6 +64,19 @@ namespace EventSourcingCQRS
             services.AddTransient<IDomainEventHandler<CartId, ProductQuantityChangedEvent>, CartUpdater>();
             services.AddTransient<ICartWriter, CartWriter>();
             services.AddTransient<ICartReader, CartReader>();
+        }
+
+        private class TransientDomainEventPubSubFactory
+        {
+            public static TransientDomainEventPubSub CreateInstance(IServiceProvider provider)
+            {
+                var publisher = new TransientDomainEventPubSub();
+                publisher.AddSubscriber<CartCreatedEvent>(async @event => await provider.GetService<IDomainEventHandler<CartId, CartCreatedEvent>>().HandleAsync(@event));
+                publisher.AddSubscriber<ProductAddedEvent>(async @event => await provider.GetService<IDomainEventHandler<CartId, ProductAddedEvent>>().HandleAsync(@event));
+                publisher.AddSubscriber<ProductQuantityChangedEvent>(async @event => await provider.GetService<IDomainEventHandler<CartId, ProductQuantityChangedEvent>>().HandleAsync(@event));
+
+                return publisher;
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,7 +100,7 @@ namespace EventSourcingCQRS
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Carts}/{action=IndexAsync}/{id?}");
+                    template: "{controller=CartsV2}/{action=IndexAsync}/{id?}");
             });
 
             conn.ConnectAsync().Wait();

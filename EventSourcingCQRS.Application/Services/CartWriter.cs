@@ -35,7 +35,7 @@ namespace EventSourcingCQRS.Application.Services
             var cart = await cartRepository.GetByIdAsync(new CartId(cartId));
 
             subscriber.Subscribe<ProductAddedEvent>(async @event => await HandleAsync(productAddedEventHandlers, @event));
-            cart.AddProduct(new ProductId(productId), quantity);
+            cart.AddProduct(new CartItem(new ProductId(productId), quantity));
             await cartRepository.SaveAsync(cart);
         }
 
