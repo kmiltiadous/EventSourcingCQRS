@@ -1,4 +1,4 @@
-﻿namespace EventSourcingCQRS.ReadModel.Common
+﻿namespace EventSourcingCQRS.ReadModel.Models
 {
     public interface IReadEntity
     {

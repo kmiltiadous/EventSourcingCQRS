@@ -1,9 +1,9 @@
-﻿using EventSourcingCQRS.ReadModel.Common;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.ReadModel.Persistence
 {

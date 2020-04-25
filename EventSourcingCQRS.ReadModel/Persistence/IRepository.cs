@@ -1,5 +1,5 @@
-﻿using EventSourcingCQRS.ReadModel.Common;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.ReadModel.Persistence
 {

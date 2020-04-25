@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using EventSourcingCQRS.ReadModel.Cart;
+using EventSourcingCQRS.ReadModel.Models;
 using EventSourcingCQRS.ReadModel.Persistence;
 
 namespace EventSourcingCQRS.Application.Services

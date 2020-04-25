@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using EventSourcingCQRS.ReadModel.Persistence;
-using EventSourcingCQRS.ReadModel.Customer;
-using EventSourcingCQRS.ReadModel.Product;
 using System.Threading.Tasks;
 using EventSourcingCQRS.Models;
 using System.Linq;
 using EventSourcingCQRS.Application.Services;
+using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.Controllers
 {
@@ -28,11 +27,9 @@ namespace EventSourcingCQRS.Controllers
 
         public async Task<IActionResult> IndexAsync()
         {
-            return View(new CartIndexViewModel
-            {
-                Carts = await cartReader.FindAllAsync(x => true),
-                Customers = (await customerRepository.FindAllAsync(x => true)).ToList()
-            });
+            return View(new CartIndexViewModel(
+                await cartReader.FindAllAsync(x => true),
+                (await customerRepository.FindAllAsync(x => true)).ToList()));
         }
 
         [HttpPost]
@@ -45,12 +42,10 @@ namespace EventSourcingCQRS.Controllers
         [Route("Carts/{id:length(41)}")]
         public async Task<IActionResult> DetailsAsync(string id)
         {
-            var viewModel = new CartDetailsViewModel
-            {
-                Cart = await cartReader.GetByIdAsync(id),
-                CartItems = (await cartReader.GetItemsOfAsync(id)).ToList(),
-                Products = (await productRepository.FindAllAsync(x => true)).ToList()
-            };
+            var viewModel = new CartDetailsViewModel(
+                await cartReader.GetByIdAsync(id),
+                (await cartReader.GetItemsOfAsync(id)).ToList(),
+                (await productRepository.FindAllAsync(x => true)).ToList());
             return View(viewModel);
         }
 

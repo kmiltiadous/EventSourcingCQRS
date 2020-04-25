@@ -31,7 +31,7 @@ namespace EventSourcingCQRS.Domain.Tests
             var cart = new Cart(DefaultCartId, DefaultCustomerId);
             ClearUncommittedEvents(cart);
 
-            cart.AddProduct(DefaultProductId, 2);
+            cart.AddProduct(new CartItem(new ProductId(DefaultProductId.IdAsString()), 2));
 
             AssertSingleUncommittedEvent<ProductAddedEvent>(cart, @event =>
             {
@@ -47,10 +47,10 @@ namespace EventSourcingCQRS.Domain.Tests
         {
             var cart = new Cart(DefaultCartId, DefaultCustomerId);
 
-            cart.AddProduct(DefaultProductId, 2);
+            cart.AddProduct(new CartItem(DefaultProductId, 2));
             ClearUncommittedEvents(cart);
 
-            Assert.Throws<CartException>(() => { cart.AddProduct(DefaultProductId, 1); });
+            Assert.Throws<CartException>(() => { cart.AddProduct(new CartItem(DefaultProductId, 1)); });
             Assert.Empty(GetUncommittedEventsOf(cart));
         }
 
@@ -59,7 +59,7 @@ namespace EventSourcingCQRS.Domain.Tests
         {
             var cart = new Cart(DefaultCartId, DefaultCustomerId);
 
-            cart.AddProduct(DefaultProductId, 2);
+            cart.AddProduct(new CartItem(DefaultProductId, 2));
             ClearUncommittedEvents(cart);
             cart.ChangeProductQuantity(DefaultProductId, 3);
             AssertSingleUncommittedEvent<ProductQuantityChangedEvent>(cart, @event =>
@@ -85,7 +85,7 @@ namespace EventSourcingCQRS.Domain.Tests
         {
             var cart = new Cart(DefaultCartId, DefaultCustomerId);
 
-            Assert.Throws<CartException>(() => { cart.AddProduct(DefaultProductId, 51); });
+            Assert.Throws<CartException>(() => { cart.AddProduct(new CartItem(DefaultProductId, 51)); });
         }
 
         [Fact]
@@ -93,7 +93,7 @@ namespace EventSourcingCQRS.Domain.Tests
         {
             var cart = new Cart(DefaultCartId, DefaultCustomerId);
 
-            cart.AddProduct(DefaultProductId, 1);
+            cart.AddProduct(new CartItem(DefaultProductId, 1));
             Assert.Throws<CartException>(() => { cart.ChangeProductQuantity(DefaultProductId, 51); });
         }
     }

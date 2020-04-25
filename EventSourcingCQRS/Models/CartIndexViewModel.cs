@@ -1,12 +1,11 @@
-﻿using EventSourcingCQRS.ReadModel.Cart;
-using EventSourcingCQRS.ReadModel.Customer;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Linq;
+using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.Models
 {
-    public class CartIndexViewModel
+    public class CartIndexViewModel :ViewModelBase
     {
         public IEnumerable<Cart> Carts { get; set; }
 
@@ -23,6 +22,12 @@ namespace EventSourcingCQRS.Models
                 })
                 .ToList();
             }
+        }
+
+        public CartIndexViewModel(IEnumerable<Cart> carts, IEnumerable<Customer> customers)
+        {
+            Carts = carts;
+            Customers = customers;
         }
     }
 }

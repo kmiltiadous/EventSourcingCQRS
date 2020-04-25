@@ -33,3 +33,9 @@
         display: none;
     }
 }
+
+.field-validation-error {
+    color: #e80c4d;
+    font-weight: bold;
+}
+

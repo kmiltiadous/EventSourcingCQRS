@@ -3,20 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourcingCQRS.Application.Services;
 
 namespace EventSourcingCQRS.Application.PubSub
 {
-    public class TransientDomainEventPubSub : IDisposable, ITransientDomainEventSubscriber, ITransientDomainEventPublisher
+    public class TransientDomainEventPubSub : IDisposable, 
+        ITransientDomainEventSubscriber, 
+        ITransientDomainEventPublisher
     {
         private static AsyncLocal<Dictionary<Type, List<object>>> handlers = new AsyncLocal<Dictionary<Type, List<object>>>();
+
+        public TransientDomainEventPubSub()
+        {
+            handlers = new AsyncLocal<Dictionary<Type, List<object>>>();
+        }
 
         public Dictionary<Type, List<object>> Handlers
         {
             get => handlers.Value ?? (handlers.Value = new Dictionary<Type, List<object>>());
-        }
-
-        public TransientDomainEventPubSub()
-        {
         }
 
         public void Dispose()
@@ -66,6 +70,20 @@ namespace EventSourcingCQRS.Application.PubSub
         private ICollection<object> GetHandlersOf<T>()
         {
             return Handlers.GetValueOrDefault(typeof(T)) ?? (Handlers[typeof(T)] = new List<object>());
+        }
+
+        public void AddSubscriber<TEvent>(Func<TEvent, Task> handler)
+        {
+            if (handlers.Value != null && handlers.Value.ContainsKey(typeof(TEvent)))
+            {
+                var value = handlers.Value[typeof(TEvent)];
+                value.Add(handler);
+            }
+            else
+            {
+                handlers.Value = handlers.Value ?? new Dictionary<Type, List<object>>();
+                handlers.Value.Add(typeof(TEvent), new List<object> { handler });
+            }
         }
     }
 }

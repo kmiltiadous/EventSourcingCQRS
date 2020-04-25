@@ -1,4 +1,4 @@
-﻿using EventSourcingCQRS.ReadModel.Common;
+﻿using EventSourcingCQRS.ReadModel.Models;
 
 namespace EventSourcingCQRS.ReadModel.Tests
 {
