@@ -43,10 +43,6 @@
                             <TextCell Text="{Binding Name}"/>
                         </DataTemplate>
                      </ListView.ItemTemplate>
-                    <!-- <ContentView.GestureRecognizers> -->
-                    <!--     <TapGestureRecognizer -->
-                    <!--         Command="{Binding SelectedProductCommand}"/> -->
-                    <!-- </ContentView.GestureRecognizers> -->
                     <ListView.Behaviors>
                         <behaviorsPack:SelectedItemBehavior
                             Command="{Binding SelectedProductCommand}"
