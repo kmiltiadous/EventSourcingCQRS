@@ -9,6 +9,12 @@
 <h2>@ViewData["Title"]</h2>
 
 <div class="container">
+    @if (!Model.WasSuccessful)
+    {
+    <div class="row field-validation-error">
+        <p class="col-lg-10">@Model.Messages.FirstOrDefault()?.Text</p>
+    </div>
+    }
     <div class="row">
         <label asp-for="Cart.CustomerName" class="col-lg-2"></label>
         <p class="col-lg-2">@Model.Cart.CustomerName</p>

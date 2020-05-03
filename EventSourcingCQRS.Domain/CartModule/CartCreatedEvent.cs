@@ -9,21 +9,25 @@ namespace EventSourcingCQRS.Domain.CartModule
         {
         }
 
-        internal CartCreatedEvent(CartId aggregateId, CustomerId customerId) : base(aggregateId)
+        internal CartCreatedEvent(CartId aggregateId, CustomerId customerId, string cartName = null) : base(aggregateId)
         {
             CustomerId = customerId;
+            CartName = cartName;
         }
 
-        private CartCreatedEvent(CartId aggregateId, long aggregateVersion, CustomerId customerId) : base(aggregateId, aggregateVersion)
+        private CartCreatedEvent(CartId aggregateId, long aggregateVersion, CustomerId customerId, string cartName = null) : base(aggregateId, aggregateVersion)
         {
             CustomerId = customerId;
+            CartName = cartName;
         }
 
         public CustomerId CustomerId { get; private set; }
 
+        public string CartName { get; private set; }
+
         public override IDomainEvent<CartId> WithAggregate(CartId aggregateId, long aggregateVersion)
         {
-            return new CartCreatedEvent(aggregateId, aggregateVersion, CustomerId);
+            return new CartCreatedEvent(aggregateId, aggregateVersion, CustomerId, CartName);
         }
     }
 }

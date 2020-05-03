@@ -1,5 +1,8 @@
-﻿namespace EventSourcingCQRS.ReadModel.Models
+﻿using System;
+
+namespace EventSourcingCQRS.ReadModel.Models
 {
+    [Serializable]
     public class Product : IReadEntity
     {
         public string Id { get; set; }

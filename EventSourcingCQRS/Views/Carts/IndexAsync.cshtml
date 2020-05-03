@@ -34,7 +34,10 @@
                 @Html.DisplayFor(modelItem => item.TotalItems)
             </td>
             <td>
-                <a href="@Url.Action("DetailsAsync", new { id = item.Id })" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
+                @{
+                    var url = Url.Action("DetailsAsync", "Carts", new { id = item.Id });
+                }
+                <a href="@url" class="btn btn-default"><span class="glyphicon glyphicon-edit"></span></a>
             </td>
         </tr>
     }
@@ -42,7 +45,7 @@
 </table>
 <div class="modal fade" role="dialog" id="createCartModal" tabindex="-1" aria-labelledby="createCartModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <form asp-action="CreateAsync" method="post">
+        <form asp-controller="Carts" asp-action="CreateAsync" method="post">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title" id="createCartModalLabel">Create new cart</h4>

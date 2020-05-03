@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="Mobile.Client.Views.CartItemSelectionPage"
+             NavigationPage.HasBackButton="False"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack">
+    <NavigationPage.TitleView>
+        <ImageButton
+            Source="back.png" 
+            HorizontalOptions="Start"
+            Command= "{Binding ReturnToCartCommand}"/>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ListView x:Name="ListView"
+                          ItemsSource="{Binding Products}"
+                          Grid.Row="0"
+                          SelectionMode="Single" >
+                    <ListView.Header>
+                        <StackLayout>
+                            <Label 
+                                Margin="0,25,0,0"
+                                Text="{Binding Cart.Name}" 
+                                FontSize="Large"
+                                FontAttributes="Bold"
+                                TextColor="LightSteelBlue"/>
+                        </StackLayout>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding Name}"/>
+                        </DataTemplate>
+                     </ListView.ItemTemplate>
+                    <!-- <ContentView.GestureRecognizers> -->
+                    <!--     <TapGestureRecognizer -->
+                    <!--         Command="{Binding SelectedProductCommand}"/> -->
+                    <!-- </ContentView.GestureRecognizers> -->
+                    <ListView.Behaviors>
+                        <behaviorsPack:SelectedItemBehavior
+                            Command="{Binding SelectedProductCommand}"
+                            ClearSelected="False"/>
+                    </ListView.Behaviors>
+                </ListView>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0"
+                           Text="{Binding SelectedProductDisplayName}"
+                           TextColor="LightSteelBlue"
+                           FontSize="Large"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Start"/>
+                    <Entry Grid.Column="1" 
+                           Keyboard="Numeric"
+                           Text="{Binding SelectedQuantity}"
+                           Placeholder="Quantity"/>
+                </Grid>
+                <ContentView Grid.Row="2">
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding AddProductCommand}">
+                        </TapGestureRecognizer>
+                    </ContentView.GestureRecognizers>
+                    <Label Text="Add"
+                           TextColor="White"
+                           FontSize="Large"
+                           BackgroundColor="LightSteelBlue"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center"/>
+                </ContentView>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

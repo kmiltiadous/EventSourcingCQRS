@@ -9,5 +9,7 @@
         public string CustomerId { get; set; }
 
         public string CustomerName { get; set; }
+
+        public string Name { get; set; }
     }
 }

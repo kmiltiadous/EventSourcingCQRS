@@ -37,6 +37,7 @@ namespace EventSourcingCQRS.Application.Handlers
                     Id = @event.AggregateId.IdAsString(),
                     CustomerId = customer.Id,
                     CustomerName = customer.Name,
+                    Name = @event.CartName,
                     TotalItems = 0
                 });
         }

@@ -3,13 +3,13 @@ using MediatR;
 
 namespace EventSourcingCQRS.Application.Commands
 {
-    public class GetCartDetailsCommand : IRequest<CommandResult>
+    public class AddProductCommand : IRequest<CommandResult>
     {
         public string CartId { get; private set; }
         public string ProductId { get; private set; }
         public int Quantity { get; private set; }
 
-        public GetCartDetailsCommand(string cartId, string productId, int quantity)
+        public AddProductCommand(string cartId, string productId, int quantity)
         {
             CartId = cartId;
             ProductId = productId;

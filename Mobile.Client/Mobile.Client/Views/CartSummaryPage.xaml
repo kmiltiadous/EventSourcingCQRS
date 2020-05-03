@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             NavigationPage.HasBackButton="False"
+             x:Class="Mobile.Client.Views.CartSummaryPage"
+             x:Name="cartSummaryViewModel"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack">
+    <NavigationPage.TitleView>
+        <ImageButton
+            Source="close.png" 
+            HorizontalOptions="Start"
+            Command= "{Binding ToggleDialogCommand}"
+            CommandParameter="{Binding Source={x:Reference Popuplayout}}"
+            IsVisible="{Binding ShowCloseDialog}" />
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" 
+                       IsVisible="{Binding IsEmpty}" 
+                       FontAttributes="Bold"
+                       FontSize="Large"
+                       TextColor="LightSteelBlue"
+                       VerticalTextAlignment="Center"
+                       HorizontalTextAlignment="Center"
+                       Text="No carts have been created" />
+                <ListView x:Name="ListView" 
+                          ItemsSource="{Binding Groups}" 
+                          Grid.Row="0" 
+                          IsGroupingEnabled="True"
+                          SelectionMode="None">
+                     <ListView.GroupHeaderTemplate> 
+                         <DataTemplate>
+                            <ViewCell>
+                                <ContentView>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="24" />
+                                        </Grid.ColumnDefinitions>
+                                        <Label Grid.Row="0" 
+                                               Grid.Column="0" 
+                                               Text="{Binding Cart.Name}" 
+                                               FontSize="Large"
+                                               FontAttributes="Bold"/>
+                                        <Image Grid.Row="0" 
+                                               Grid.Column="1"
+                                               Source="forward.png"></Image>
+                                    </Grid>
+                                    <ContentView.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={x:Reference cartSummaryViewModel}, 
+                                            Path=BindingContext.SelectCartCommand}"
+                                            CommandParameter="{Binding Cart}"/>
+                                    </ContentView.GestureRecognizers>
+                                </ContentView>
+                            </ViewCell>
+                         </DataTemplate>
+                     </ListView.GroupHeaderTemplate> 
+                     <ListView.ItemTemplate> 
+                         <DataTemplate> 
+                             <TextCell Text="{Binding ProductName}" 
+                                       Detail="{Binding Quantity, 
+                                 StringFormat='{0} items'}" /> 
+                         </DataTemplate> 
+                     </ListView.ItemTemplate> 
+                     </ListView> 
+                <ContentView Grid.Row="1">
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding ToggleDialogCommand}"
+                            CommandParameter="{Binding Source={x:Reference Popuplayout}}">
+                        </TapGestureRecognizer>
+                    </ContentView.GestureRecognizers>
+                    <Label Text="Create Cart"
+                           TextColor="White"
+                           FontSize="Large"
+                           BackgroundColor="LightSteelBlue"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center"/>
+
+                </ContentView>
+            </Grid>
+            <Frame
+                x:Name="Popuplayout"
+                HasShadow="True"
+                IsVisible="{Binding ShowCloseDialog}"
+                Scale="0"
+                BackgroundColor="White"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                AbsoluteLayout.LayoutFlags="All"
+                AbsoluteLayout.LayoutBounds="1,1,1,1"
+                Padding="0">
+                <Frame.Behaviors>
+                    <behaviorsPack:EventToCommandBehavior 
+                        EventName="PropertyChanged" 
+                        Command="{Binding Source={x:Reference cartSummaryViewModel},
+                        Path=BindingContext.DialogStateChangedCommand}"
+                        EventArgsConverter="{StaticResource PropertyChangedEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding Source={x:Reference Popuplayout}}">
+                    </behaviorsPack:EventToCommandBehavior>
+                </Frame.Behaviors>
+                <Grid ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="50">
+                        <Picker  x:Name="Picker"
+                                 Title="Select customer"
+                                 ItemsSource="{Binding Customers}"
+                                 ItemDisplayBinding="{Binding Name}"
+                                 HorizontalOptions="Fill"
+                                 VerticalOptions="Start"
+                                 Margin="0,50,0,0"
+                                 SelectedItem="{Binding SelectedCustomer}"/>
+                        <Entry Placeholder="Cart name" 
+                               Text="{Binding NewCartName}"
+                               HorizontalOptions="Fill" />
+                    </StackLayout>
+                    <ContentView Grid.Row="1" 
+                                 Grid.Column="0" 
+                                 Grid.ColumnSpan="2">
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding CreateCartCommand}"/>
+                        </ContentView.GestureRecognizers>
+                        <Label Text="Create"
+                               TextColor="White"
+                               FontSize="Large"
+                               BackgroundColor="LightSteelBlue"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"/>
+                    </ContentView>
+                </Grid>
+            </Frame>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

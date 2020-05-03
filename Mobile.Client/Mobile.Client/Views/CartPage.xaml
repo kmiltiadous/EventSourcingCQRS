@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:behaviorsPack="clr-namespace:Xamarin.Forms.BehaviorsPack;assembly=Xamarin.Forms.BehaviorsPack"
+             mc:Ignorable="d"
+             x:Class="Mobile.Client.Views.CartPage" 
+             NavigationPage.HasBackButton="False"
+             x:Name="cartViewModel">
+    <NavigationPage.TitleView>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ImageButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Source="close.png" 
+                    HorizontalOptions="Start"
+                    Command= "{Binding ToggleDialogCommand}"
+                    CommandParameter="{Binding Source={x:Reference Popuplayout}}"
+                    IsVisible="{Binding ShowCloseDialog}" />
+                <ImageButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Source="home.png" 
+                    HorizontalOptions="Start"
+                    Command= "{Binding ReturnToHomeCommand}"
+                    IsVisible="{Binding CanReturnToHome}"/>
+            </Grid>
+        </StackLayout>
+    </NavigationPage.TitleView>
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="50" />
+                    <RowDefinition Height="50" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" 
+                       IsVisible="{Binding IsEmpty}" 
+                       FontAttributes="Bold"
+                       FontSize="Large"
+                       TextColor="LightSteelBlue"
+                       VerticalTextAlignment="Center"
+                       HorizontalTextAlignment="Center"
+                       Text="No items have been added" />
+                <ListView x:Name="ListView"
+                          ItemsSource="{Binding SelectedProducts}"
+                          Grid.Row="0"
+                          SelectionMode="Single"
+                          SelectedItem="{Binding SelectedItem}">
+                    <ListView.Header>
+                        <StackLayout>
+                            <Label 
+                                Margin="0,25,0,0"
+                                Text="{Binding Cart.Name}" 
+                                FontSize="Large"
+                                FontAttributes="Bold"
+                                TextColor="LightSteelBlue"/>
+                        </StackLayout>
+                    </ListView.Header>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextCell Text="{Binding ProductName}"
+                                      Command="{Binding Source={x:Reference cartViewModel}, 
+                                            Path=BindingContext.ToggleDialogCommand}"
+                                      CommandParameter="{Binding Source={x:Reference Popuplayout}}"/>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+                <ContentView Grid.Row="2">
+                    <ContentView.GestureRecognizers>
+                        <TapGestureRecognizer
+                            Command="{Binding AddProductCommand}">
+                        </TapGestureRecognizer>
+                    </ContentView.GestureRecognizers>
+                    <Label Text="Add Product"
+                           TextColor="White"
+                           FontSize="Large"
+                           BackgroundColor="LightSteelBlue"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center"/>
+                </ContentView>
+            </Grid>
+            <Frame
+                x:Name="Popuplayout"
+                HasShadow="True"
+                IsVisible="{Binding ShowCloseDialog}"
+                Scale="0"
+                BackgroundColor="White"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                AbsoluteLayout.LayoutFlags="All"
+                AbsoluteLayout.LayoutBounds="1,1,1,1"
+                Padding="0">
+                <Frame.Behaviors>
+                    <behaviorsPack:EventToCommandBehavior 
+                        EventName="PropertyChanged" 
+                        Command="{Binding Source={x:Reference cartViewModel},
+                        Path=BindingContext.DialogStateChangedCommand}"
+                        EventArgsConverter="{StaticResource PropertyChangedEventArgsConverter}"
+                        EventArgsConverterParameter="{Binding Source={x:Reference Popuplayout}}">
+                    </behaviorsPack:EventToCommandBehavior>
+                </Frame.Behaviors>
+                <Grid ColumnSpacing="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="50" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Spacing="50">
+                        <Label Text="{Binding SelectedItem.ProductName}" 
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Start"
+                               Margin="0,50,0,0"/>
+                        <Entry Text="{Binding SelectedItem.Quantity}" 
+                               HorizontalOptions="Fill" />
+                    </StackLayout>
+                    <ContentView Grid.Row="1" 
+                                 Grid.Column="0" 
+                                 Grid.ColumnSpan="2">
+                        <ContentView.GestureRecognizers>
+                            <TapGestureRecognizer
+                                Command="{Binding UpdateItemCommand}"/>
+                        </ContentView.GestureRecognizers>
+                        <Label Text="Update"
+                               TextColor="White"
+                               FontSize="Large"
+                               BackgroundColor="LightSteelBlue"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center"/>
+                    </ContentView>
+                </Grid>
+            </Frame>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

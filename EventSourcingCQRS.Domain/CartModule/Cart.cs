@@ -20,9 +20,11 @@ namespace EventSourcingCQRS.Domain.CartModule
 
         private CustomerId CustomerId { get; set; }
 
+        private string CartName { get; set; }
+
         private List<CartItem> Items { get; set; }
 
-        public Cart(CartId cartId, CustomerId customerId) : this()
+        public Cart(CartId cartId, CustomerId customerId, string cartName = null) : this()
         {
             if (cartId == null)
             {
@@ -32,7 +34,7 @@ namespace EventSourcingCQRS.Domain.CartModule
             {
                 throw new ArgumentNullException(nameof(customerId));
             }
-            RaiseEvent(new CartCreatedEvent(cartId, customerId));
+            RaiseEvent(new CartCreatedEvent(cartId, customerId, cartName));
         }
 
         public void AddProduct(CartItem cartItem)
@@ -70,6 +72,7 @@ namespace EventSourcingCQRS.Domain.CartModule
         {
             Id = ev.AggregateId;
             CustomerId = ev.CustomerId;
+            CartName = ev.CartName;
         }
 
         internal void Apply(ProductAddedEvent ev)

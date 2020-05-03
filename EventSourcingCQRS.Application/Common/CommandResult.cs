@@ -3,6 +3,16 @@ using System.Linq;
 
 namespace EventSourcingCQRS.Application.Common
 {
+    public class CommandResult<T> : CommandResult
+    {
+        public T Value { get; }
+
+        public CommandResult(T value)
+        {
+            Value = value;
+        }
+    }
+
     public class CommandResult
     {
         public CommandResult() : this(new List<BrokenRule>())

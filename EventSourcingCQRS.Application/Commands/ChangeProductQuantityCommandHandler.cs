@@ -3,10 +3,11 @@ using EventSourcingCQRS.Domain.Persistence;
 using EventSourcingCQRS.Domain.ProductModule;
 using System.Threading;
 using System.Threading.Tasks;
+using EventSourcingCQRS.Application.Common;
 
 namespace EventSourcingCQRS.Application.Commands
 {
-    public class ChangeProductQuantityCommandHandler : CommandHandlerBase<Cart, CartId, ChangeProductQuantityCommand>
+    public class ChangeProductQuantityCommandHandler : CommandHandler<Cart, CartId, ChangeProductQuantityCommand>
     {
         public ChangeProductQuantityCommandHandler(IRepository<Cart, CartId> cartRepository) : 
             base(cartRepository)
@@ -18,10 +19,10 @@ namespace EventSourcingCQRS.Application.Commands
             return new CartId(request.CartId);
         }
 
-        public override Task ChangeState(Cart aggregate, ChangeProductQuantityCommand request, CancellationToken cancellationToken)
+        public override Task<CommandResult> ChangeState(Cart aggregate, ChangeProductQuantityCommand request, CancellationToken cancellationToken)
         {
             aggregate.ChangeProductQuantity(new ProductId(request.ProductId), request.Quantity);
-            return Task.CompletedTask;
+            return Task.FromResult(new CommandResult());
         }
     }
 }
